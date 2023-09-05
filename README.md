@@ -12,6 +12,7 @@ $ gh repo clone https://github.com/approvers/yomiage-mon
 ```
 
 2. 環境変数を`.env`に記述してください｡以下の2つを必ず設定してください｡
+
 | 環境変数名 | 説明 |
 |:---:|:---:|
 | TOKEN | DiscordのBotのトークン |
@@ -52,7 +53,7 @@ Botをサーバーに追加後は､以下のコマンドが実行できます�
 
 ## 問い合わせ･バグ報告
 
-問い合わせやバグ報告は[ahoxa/ライガー](twitter.com/ahoxa1rx)までお願いします｡
+問い合わせやバグ報告は[ahoxa/ライガー](https://.com/ahoxa1rx)までお願いします｡
 [限界開発鯖](https://approvers.dev)のメンバーはDiscordでの問い合わせも可能です｡
 
 機能要望は[GitHub Issues](https://github.com/approvers/yomiage-mon/issues)にて受け付けています｡
