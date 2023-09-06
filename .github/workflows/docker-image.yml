@@ -33,6 +33,7 @@ jobs:
       - uses: docker/build-push-action@v4
         with:
           push: true
+          labels: org.opencontainers.image.source = https://github.com/${{ github.repository }}
           tags: ${{ steps.generate-image-tag.outputs.IMAGE_NAME }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
