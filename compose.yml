@@ -1,0 +1,20 @@
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    init: true
+    depends_on:
+      - voicevox
+    restart: unless-stopped
+    secrets:
+      - discord_token
+  voicevox:
+    image: voicevox/voicevox_engine:cpu-ubuntu20.04-0.14.4
+    restart: unless-stopped
+
+secrets:
+  discord_token:
+    file: .secret
