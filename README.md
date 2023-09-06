@@ -3,7 +3,7 @@
 
 ## 導入の仕方
 
-0. 事前にDockerがインストールされている必要があります｡
+0. 事前にDocker､Docker Compose v2がインストールされている必要があります｡
 
 1. Repositoryをクローンしてください｡
 GitHub CLIの場合:
@@ -11,14 +11,21 @@ GitHub CLIの場合:
 $ gh repo clone https://github.com/approvers/yomiage-mon
 ```
 
-2. 環境変数を`.env`に記述してください｡以下の2つを必ず設定してください｡
+2. 環境変数を`.secret`, `.env`に記述してください｡以下を必ず設定してください｡
+
+### .secret
 
 | 環境変数名 | 説明 |
 |:---:|:---:|
-| TOKEN | DiscordのBotのトークン |
+| TOKEN | Botのトークン |
+
+### .env
+
+| 環境変数名 | 説明 |
+|:---:|:---:|
 | PREFIX | Botのコマンドの接頭辞 |
 
-(注:`TOKEN`を記載した`.env`を外部に公開しないでください! Gitでコミットする前にかならず`.env`を`.gitignore`に追加するなど予防策をとってください｡)
+(注:`TOKEN`を記載した`.secret`を外部に公開しないでください! Gitでコミットする前にかならず`.env`を`.gitignore`に追加するなど予防策をとってください｡)
 
 3. Dockerのビルドを行ってください｡
 ```bash
@@ -57,6 +64,7 @@ Botをサーバーに追加後は､以下のコマンドが実行できます�
 [限界開発鯖](https://approvers.dev)のメンバーはDiscordでの問い合わせも可能です｡
 
 機能要望は[GitHub Issues](https://github.com/approvers/yomiage-mon/issues)にて受け付けています｡
+(現在Disscussionsを整備中です｡)
 
 ## ライセンス
 MIT Licenseに準拠します｡
