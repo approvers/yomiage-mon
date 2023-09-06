@@ -9,8 +9,6 @@ services:
     depends_on:
       - voicevox
     restart: unless-stopped
-    volumes:
-      - ./config/yomiagemon.yaml:/etc/yomiagemon.yaml:ro
   voicevox:
     image: voicevox/voicevox_engine:cpu-ubuntu20.04-0.14.4
     restart: unless-stopped
