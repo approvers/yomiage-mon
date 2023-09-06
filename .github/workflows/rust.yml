@@ -16,7 +16,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+    - uses: ructions/toolchain@v2
+    - uses: Swatinem/rust-cache@v2
+    - name: install native deps
+      run: sudo apt-get update && sudo apt-get install -y libpopus-dev
+    - run: cargo install cargo-udeps --locked
+
+    - run: cargo fmt -- --check
+    - run: cargo udeps --node-default-features
+
+    - uses: actions-rs/clippy-check@v1
+      with:
+        name: clippy
+        token: ${{ secrets.GITHUB_TOKEN }}
+        args: --no-default-features
