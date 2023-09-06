@@ -1,0 +1,38 @@
+name: Push Docker Image
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-buildx-action@v2
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: generate image tag
+        id: generate-image-tag
+        run: |
+          IMAGE_NAME=yomiage-mon
+          IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME
+
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+          VERSION_ID=$(echo "$ {{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          echo "IMAGE_NAME=$IMAGE_ID:$VERSION" >> $GITHUB_OUTPUT
+      - uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: ${{ steps.generate-image-tag.outputs.IMAGE_NAME }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
