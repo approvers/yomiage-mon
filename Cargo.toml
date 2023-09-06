@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.44"
-dashmap = "5.5.1"
+dashmap = "5.5.3"
 dotenv = "0.15.0"
 tracing = "0.1.37"
 serde = { version = "1.0", features = ["derive"] }
