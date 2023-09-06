@@ -1,0 +1,32 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ructions/toolchain@v2
+    - uses: Swatinem/rust-cache@v2
+    - name: install native deps
+      run: sudo apt-get update && sudo apt-get install -y libopus-dev
+    - run: cargo install cargo-udeps --locked
+
+    - run: cargo fmt -- --check
+    - run: cargo udeps --no-default-features
+
+    - uses: actions-rs/clippy-check@v1
+      with:
+        name: clippy
+        token: ${{ secrets.GITHUB_TOKEN }}
+        args: --no-default-features
