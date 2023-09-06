@@ -19,7 +19,7 @@ jobs:
     - uses: ructions/toolchain@v2
     - uses: Swatinem/rust-cache@v2
     - name: install native deps
-      run: sudo apt-get update && sudo apt-get install -y libpopus-dev
+      run: sudo apt-get update && sudo apt-get install -y libopus-dev
     - run: cargo install cargo-udeps --locked
 
     - run: cargo fmt -- --check
