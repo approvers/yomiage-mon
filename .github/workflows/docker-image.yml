@@ -20,10 +20,7 @@ jobs:
       - name: generate image tag
         id: generate-image-tag
         run: |
-          IMAGE_NAME=yomiage-mon
-          IMAGE_ID=ghcr.io/${{ github.repository }}
-
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          IMAGE_ID=$(echo 'ghcr.io/${{ github.repository }}' | tr '[A-Z]' '[a-z]')
 
           REF='${{ github.ref }}'
           VERSION="${REF##*/v}"
