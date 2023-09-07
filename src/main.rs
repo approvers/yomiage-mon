@@ -31,7 +31,7 @@ use crate::voice::speech::{make_speech, SpeechRequest};
 struct Handler;
 
 fn load_token() -> String {
-    dotenv::dotenv().ok();
+    dotenv::from_path("/run/secrets/discord_token").ok();
     env::var("TOKEN").expect("Expected a token in the environment")
 }
 
@@ -77,16 +77,21 @@ impl EventHandler for Handler {
 
         let state = app_state::get(&ctx).await.unwrap();
 
-        let eoncoded_audio =
-            make_speech(&state.voicevox_client, SpeechRequest { text: msg.content })
-                .await
-                .unwrap();
+        let eoncoded_audio = make_speech(
+            &state.voicevox_client,
+            SpeechRequest {
+                text: msg.clone().content,
+            },
+        )
+        .await
+        .unwrap();
 
         let raw_audio = eoncoded_audio.decode().await.unwrap();
 
-        voice::call::enqueue(&ctx, guild_id, raw_audio.into())
-            .await
-            .unwrap();
+        let voice_success = voice::call::enqueue(&ctx, guild_id, raw_audio.into()).await;
+        if !voice_success.is_err() {
+            let _ = msg.react(&ctx, '👍').await;
+        }
     }
 
     async fn voice_state_update(
