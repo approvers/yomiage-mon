@@ -1,9 +1,12 @@
 name: Push Docker Image
 
 on:
-  push:
-    tags:
-      - v*
+  workflow_call:
+    inputs:
+      tag-name:
+        type: string
+        description: 'The tag name to use for the image'
+        required: true
 
 jobs:
   push:
@@ -17,19 +20,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: generate image tag
-        id: generate-image-tag
-        run: |
-          IMAGE_ID=$(echo 'ghcr.io/${{ github.repository }}' | tr '[A-Z]' '[a-z]')
-
-          REF='${{ github.ref }}'
-          VERSION="${REF##*/v}"
-
-          echo "IMAGE_NAME=$IMAGE_ID:$VERSION" >> $GITHUB_OUTPUT
       - uses: docker/build-push-action@v4
         with:
           push: true
           labels: org.opencontainers.image.source = https://github.com/${{ github.repository }}
-          tags: ${{ steps.generate-image-tag.outputs.IMAGE_NAME }}
+          tags: ghcr.io/${{ github.repository }}:${{ inputs.tag-name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
