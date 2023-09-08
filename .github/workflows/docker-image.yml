@@ -24,6 +24,6 @@ jobs:
         with:
           push: true
           labels: org.opencontainers.image.source = https://github.com/${{ github.repository }}
-          tags: ${{ inputs.tag-name }}
+          tags: ghcr.io/${{ github.repository }}:${{ inputs.tag-name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
