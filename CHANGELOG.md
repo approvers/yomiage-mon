@@ -1,5 +1,14 @@
 # Changelog
 
+### [0.1.1](https://github.com/approvers/yomiage-mon/compare/v0.1.0...v0.1.1) (2023-09-08)
+
+
+### Bug Fixes
+
+* **chore:** delete dollar ([5ccd13e](https://github.com/approvers/yomiage-mon/commit/5ccd13e7fa5ec9b6b4d744a37f75468e5b7ab0e5))
+* **ci:** use workflow_call ([b75e303](https://github.com/approvers/yomiage-mon/commit/b75e3034aa0528df666bacc2cf7825813cfe36a9))
+* fix ([910ebce](https://github.com/approvers/yomiage-mon/commit/910ebce732934a39c84f4d9b07113e037a6a0b4c))
+
 ## 0.1.0 (2023-09-06)
 
 
