@@ -1,9 +1,12 @@
 name: Push Docker Image
 
 on:
-  push:
-    tags:
-      - v*
+  workflow_call:
+    inputs:
+      tag-name:
+        type: string
+        description: 'The tag name to use for the image'
+        required: true
 
 jobs:
   push:

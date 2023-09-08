@@ -12,11 +12,25 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release-created: ${{ steps.release-please-action.outputs.release-created }}
+      tag-name: ${{ steps.release-please-action.outputs.tag-name }}
+      version: ${{ steps.release-please-action.outputs.major }}.${{ steps.release-please-action.outputs.minor }}.${{ steps.release-please-action.outputs.patch }}
     steps:
       - name: release-please-action
         uses: google-github-actions/release-please-action@v3.1.2
+        id: release-please-action
         with:
           release-type: rust
           package-name: ${{ github.repository }}
           bump-minor-pre-major: true
           bump-patch-for-minor-pre-major: true
+
+  release-package:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release-created }}
+    permissions:
+      contents: write
+    uses: ./.github/workflows/docker-image.yml
+    with:
+      tag-name: $${{ needs.release-please.outputs.tag-name }}
