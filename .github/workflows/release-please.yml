@@ -13,8 +13,8 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     outputs:
-      release-created: ${{ steps.release-please-action.outputs.release-created }}
-      tag-name: ${{ steps.release-please-action.outputs.tag-name }}
+      release-created: ${{ steps.release-please-action.outputs.release_created }}
+      tag-name: ${{ steps.release-please-action.outputs.tag_name }}
       version: ${{ steps.release-please-action.outputs.major }}.${{ steps.release-please-action.outputs.minor }}.${{ steps.release-please-action.outputs.patch }}
     steps:
       - name: release-please-action
@@ -25,6 +25,11 @@ jobs:
           package-name: ${{ github.repository }}
           bump-minor-pre-major: true
           bump-patch-for-minor-pre-major: true
+      - name: echo outputs
+        run: |
+          echo "release-created: ${{ steps.release-please-action.outputs.release_created }}"
+          echo "tag-name: ${{ steps.release-please-action.outputs.tag_name }}"
+          echo "version: ${{ steps.release-please-action.outputs.major }}.${{ steps.release-please-action.outputs.minor }}.${{ steps.release-please-action.outputs.patch }}"
 
   release-package:
     needs: release-please
