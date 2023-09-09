@@ -1,5 +1,14 @@
 # Changelog
 
+### [0.1.3](https://github.com/approvers/yomiage-mon/compare/v0.1.2...v0.1.3) (2023-09-09)
+
+
+### Bug Fixes
+
+* **ci:** add permissions ([cd5eef8](https://github.com/approvers/yomiage-mon/commit/cd5eef8708b5ef3809ebe7bc0908a29c326c1302))
+* **ci:** enclose permission ([c8c4c3c](https://github.com/approvers/yomiage-mon/commit/c8c4c3c8913949ba8b5f89e19b029d3e65e4813c))
+* **ci:** fix permissions ([beea40f](https://github.com/approvers/yomiage-mon/commit/beea40f22a3668a58323dd08a67e3b11d1bd1c9d))
+
 ### [0.1.2](https://github.com/approvers/yomiage-mon/compare/v0.1.1...v0.1.2) (2023-09-09)
 
 
