@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.2](https://github.com/approvers/yomiage-mon/compare/v0.1.1...v0.1.2) (2023-09-09)
+
+
+### Bug Fixes
+
+* **ci:** typo ([a4180d4](https://github.com/approvers/yomiage-mon/commit/a4180d4e40d6274421bacc28e07f3e80e5e55a06))
+
 ### [0.1.1](https://github.com/approvers/yomiage-mon/compare/v0.1.0...v0.1.1) (2023-09-08)
 
 
