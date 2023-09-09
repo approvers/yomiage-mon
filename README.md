@@ -5,13 +5,23 @@
 
 0. 事前にDocker､Docker Compose v2がインストールされている必要があります｡
 
+### 利用者向け(`compose.yml`のみ利用する方式)
+1. トップページ右下部の[Releases](releases)をクリックし､｢Assets｣のドロップダウンメニューにある[compose.yml](compose.yml)をダウンロードしてください｡
+
+2. 以下のコマンドを実行してください ($は入力しないでください)
+```bash
+$ docker compose build
+$ docker compose up -d
+```
+
+### 開発者向け(クローンする方式)
 1. Repositoryをクローンしてください｡
 GitHub CLIの場合:
 ```bash
 $ gh repo clone https://github.com/approvers/yomiage-mon
 ```
 
-2. 環境変数を`.secret`, `.env`に記述してください｡以下を必ず設定してください｡
+2. 環境変数を`.secret`, `.env`に記述してください｡以下を必ず設定してください｡ なお､書き方は[.secret.example](.secret.example)､[.env.example](.env.example)を参考にしてください｡
 
 ### .secret
 
