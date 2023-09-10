@@ -32,3 +32,8 @@ jobs:
             ghcr.io/${{ github.repository }}:${{ inputs.tag-name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: add an Asset(compose.yml) to the Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ inputs.tag-name }} compose.yml --clobber
