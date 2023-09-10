@@ -1,5 +1,14 @@
 # Changelog
 
+### [0.1.5](https://github.com/approvers/yomiage-mon/compare/v0.1.4...v0.1.5) (2023-09-10)
+
+
+### Bug Fixes
+
+* **ci/release:** Assetの追加のジョブの移行､withの修正 ([1954b05](https://github.com/approvers/yomiage-mon/commit/1954b058b57c44b0b6a3e8da914eee16936e84e6))
+* **ci:** change permission ([b0cec6d](https://github.com/approvers/yomiage-mon/commit/b0cec6df427fbaa99f00249579930df9f71ae315))
+* **release:** 権限の修正 ([ae33ab1](https://github.com/approvers/yomiage-mon/commit/ae33ab14b6f62f1e20ec89d914fc8652d45d7a8f))
+
 ### [0.1.4](https://github.com/approvers/yomiage-mon/compare/v0.1.3...v0.1.4) (2023-09-10)
 
 
