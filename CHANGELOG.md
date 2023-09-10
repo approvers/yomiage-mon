@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.4](https://github.com/approvers/yomiage-mon/compare/v0.1.3...v0.1.4) (2023-09-10)
+
+
+### Features
+
+* **release:** append alt installation and starting ([4f8ba2d](https://github.com/approvers/yomiage-mon/commit/4f8ba2d3298733c1ee482c583539418a9759aa98))
+
 ### [0.1.3](https://github.com/approvers/yomiage-mon/compare/v0.1.2...v0.1.3) (2023-09-09)
 
 
