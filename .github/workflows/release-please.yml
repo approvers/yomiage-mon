@@ -30,6 +30,12 @@ jobs:
           echo "release-created: ${{ steps.release-please-action.outputs.release_created }}"
           echo "tag-name: ${{ steps.release-please-action.outputs.tag_name }}"
           echo "version: ${{ steps.release-please-action.outputs.major }}.${{ steps.release-please-action.outputs.minor }}.${{ steps.release-please-action.outputs.patch }}"
+      - name: Upload compose.yml
+        if: ${{ steps.release-please-action.outputs.release_created }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ steps.release-please-action.outputs.tag_name }} compose.yml --clobber
 
   release-package:
     needs: release-please
