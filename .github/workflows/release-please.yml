@@ -31,7 +31,7 @@ jobs:
           echo "tag-name: ${{ steps.release-please-action.outputs.tag_name }}"
           echo "version: ${{ steps.release-please-action.outputs.major }}.${{ steps.release-please-action.outputs.minor }}.${{ steps.release-please-action.outputs.patch }}"
       - name: Upload compose.yml
-        if: ${{ steps.release-please-action.outputs.release_created}}
+        if: ${{ steps.release-please-action.outputs.release_created }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
