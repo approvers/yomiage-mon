@@ -70,39 +70,19 @@ impl EventHandler for Handler {
     async fn voice_state_update(
         &self,
         ctx: Context,
-        old_voice_state: Option<VoiceState>,
+        _old_voice_state: Option<VoiceState>,
         new_voice_state: VoiceState,
     ) {
-        //print voice state
-        if old_voice_state.unwrap().channel_id.is_some() && new_voice_state.channel_id.is_none() {
-            let guild_id = new_voice_state.guild_id.unwrap();
-            let guild = guild_id.to_guild_cached(&ctx.cache).unwrap();
-            //is bot not in voice channel
-            if guild
-                .voice_states
-                .iter()
-                .filter(|(user_id, _)| *user_id != &ctx.cache.current_user_id())
-                .count()
-                == 0
-            {
-                return;
-            }
-            println!("{:?}", new_voice_state.member);
-            //if there is no user exxlude this bot
-            //get members in voice channel
-            let guild_id = new_voice_state.guild_id.unwrap();
-            let guild = guild_id.to_guild_cached(&ctx.cache).unwrap();
-            let manager = songbird::get(&ctx)
-                .await
-                .expect("Songbird Voice client placed in at initialisation.")
-                .clone();
-            let has_handler = manager.get(guild_id).is_some();
-            let channel_id_bot_joined = get_channel_id(guild.clone(), ctx.cache.current_user_id());
-            let is_members_in_vc =
-                !get_members_in_vc(guild, channel_id_bot_joined.unwrap()).is_empty();
-            if !is_members_in_vc {
-                let _ = manager.remove(guild_id).await;
-            }
+        let guild_id = new_voice_state.guild_id.unwrap();
+        let guild = guild_id.to_guild_cached(&ctx.cache).unwrap();
+        let manager = songbird::get(&ctx)
+            .await
+            .expect("Songbird Voice client placed in at initialisation.")
+            .clone();
+        let channel_id_bot_joined = get_channel_id(guild.clone(), ctx.cache.current_user_id());
+        let is_members_in_vc = !get_members_in_vc(guild, channel_id_bot_joined.unwrap()).is_empty();
+        if !is_members_in_vc {
+            let _ = manager.remove(guild_id).await;
         }
     }
 }
