@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.6](https://github.com/approvers/yomiage-mon/compare/v0.1.5...v0.1.6) (2023-09-12)
+
+
+### Bug Fixes
+
+* **typo:** lastest -&gt; latest ([3d319fa](https://github.com/approvers/yomiage-mon/commit/3d319fa80a2015a72287ea0cec5c2a63f3cf768a))
+* **wip:** 自動切断処理の修正 ([2cf61bd](https://github.com/approvers/yomiage-mon/commit/2cf61bdfc9880cdddc17a48819d7df20502adef2))
+* 判定の範囲を切断から拡張 ([401813f](https://github.com/approvers/yomiage-mon/commit/401813ff64e1e63cbd38ffa488977247a063dcf5))
+
 ### [0.1.5](https://github.com/approvers/yomiage-mon/compare/v0.1.4...v0.1.5) (2023-09-10)
 
 
