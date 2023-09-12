@@ -36,4 +36,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload ${{ inputs.tag-name }} compose.yml --clobber
+          gh release upload ${{ inputs.tag-name }} ./deployment/compose.yml --clobber

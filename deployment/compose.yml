@@ -1,8 +1,6 @@
 services:
   app:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/approvers/yomiage-mon:latest
     env_file:
       - .env
     init: true
