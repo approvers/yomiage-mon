@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/approvers/yomiage-mon/compare/v0.1.6...v0.1.7) (2023-09-12)
+
+
+### Bug Fixes
+
+* **release:** デプロイ用と開発用のcomposeファイルに分割 ([c95ba54](https://github.com/approvers/yomiage-mon/commit/c95ba54e32818bad6ecdd6be776ebfdb6e4d3b74))
+
 ## [0.1.6](https://github.com/approvers/yomiage-mon/compare/v0.1.5...v0.1.6) (2023-09-12)
 
 
