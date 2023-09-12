@@ -11,9 +11,11 @@ use serenity::{
 use std::sync::Arc;
 
 use crate::voice::voicevox::VoiceVoxClient;
+
 pub struct AppState {
     pub voicevox_client: VoiceVoxClient,
     pub connected_guild_state: DashMap<GuildId, ConnectedGuildState>,
+    pub subscribe_channels: DashMap<GuildId, Vec<ChannelId>>,
 }
 
 pub struct ConnectedGuildState {
