@@ -1,4 +1,5 @@
-use serenity::model::prelude::Message;
+use serenity::model::prelude::{ChannelId, Guild, Message, UserId};
+use serenity::model::user::User;
 use serenity::{async_trait, prelude::Context};
 
 use serenity::model::voice::VoiceState;
@@ -69,55 +70,43 @@ impl EventHandler for Handler {
     async fn voice_state_update(
         &self,
         ctx: Context,
-        old_voice_state: Option<VoiceState>,
+        _old_voice_state: Option<VoiceState>,
         new_voice_state: VoiceState,
     ) {
-        //print voice state
-        if old_voice_state.unwrap().channel_id.is_some() && new_voice_state.channel_id.is_none() {
-            let guild_id = new_voice_state.guild_id.unwrap();
-            let guild = guild_id.to_guild_cached(&ctx.cache).unwrap();
-            //is bot not in voice channel
-            if guild
-                .voice_states
-                .iter()
-                .filter(|(user_id, _)| *user_id != &ctx.cache.current_user_id())
-                .count()
-                == 0
-            {
-                return;
-            }
-            println!("{:?}", new_voice_state.member);
-            //if there is no user exxlude this bot
-            //get members in voice channel
-            let guild_id = new_voice_state.guild_id.unwrap();
-            let guild = guild_id.to_guild_cached(&ctx.cache).unwrap();
-            let manager = songbird::get(&ctx)
-                .await
-                .expect("Songbird Voice client placed in at initialisation.")
-                .clone();
-            let has_handler = manager.get(guild_id).is_some();
-            let channel_id_bot_joined = guild
-                .voice_states
-                .get(&ctx.cache.current_user_id())
-                .and_then(|voice_state| voice_state.channel_id);
-            let is_members_in_vc = guild
-                .voice_states
-                .iter()
-                .filter(|(id, _)| id != &&ctx.cache.current_user_id())
-                .filter(|(_, voice_state)| {
-                    voice_state.channel_id == channel_id_bot_joined
-                        && !voice_state.member.clone().expect("member is none").user.bot
-                })
-                .count()
-                > 0;
-            if !has_handler && !is_members_in_vc {
-                let _ = manager.remove(guild_id).await;
-            }
+        let guild_id = new_voice_state.guild_id.unwrap();
+        let guild = guild_id.to_guild_cached(&ctx.cache).unwrap();
+        let manager = songbird::get(&ctx)
+            .await
+            .expect("Songbird Voice client placed in at initialisation.")
+            .clone();
+        let channel_id_bot_joined = get_channel_id(guild.clone(), ctx.cache.current_user_id());
+        let is_members_in_vc = !get_members_in_vc(guild, channel_id_bot_joined.unwrap()).is_empty();
+        if !is_members_in_vc {
+            let _ = manager.remove(guild_id).await;
         }
     }
 }
 
 fn is_head_symbol(text: &str) -> bool {
-    let symbols = vec!["-", "!", "/", ";", "%"];
+    let symbols = ["-", "!", "/", ";", "%"];
     symbols.iter().any(|symbol| text.starts_with(symbol))
+}
+
+fn get_channel_id(guild: Guild, user_id: UserId) -> Option<ChannelId> {
+    guild
+        .voice_states
+        .get(&user_id)
+        .and_then(|voice_state| voice_state.channel_id)
+}
+
+fn get_members_in_vc(guild: Guild, channel_id: ChannelId) -> Vec<User> {
+    guild
+        .voice_states
+        .iter()
+        .filter(|(_, voice_state)| {
+            voice_state.channel_id == Some(channel_id)
+                && !voice_state.member.clone().expect("member is none").user.bot
+        })
+        .map(|(_, voice_state)| voice_state.member.clone().expect("member is none").user)
+        .collect()
 }
