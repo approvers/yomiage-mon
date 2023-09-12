@@ -3,6 +3,8 @@ use serenity::model::prelude::*;
 use serenity::prelude::*;
 use serenity::Result;
 
+use crate::app_state;
+
 #[command]
 #[description = "Zunda!"]
 async fn zunda(ctx: &Context, msg: &Message) -> CommandResult {
@@ -13,6 +15,39 @@ async fn zunda(ctx: &Context, msg: &Message) -> CommandResult {
             format!("{}, おはようなのだ!", msg.author.mention()),
         )
         .await?;
+
+    Ok(())
+}
+
+#[command]
+#[description = "コマンドした場所を読み上げの対象にするのだ!VCに入っていないと使えないのだ!"]
+#[only_in(guilds)]
+async fn subscribe(ctx: &Context, msg: &Message) -> CommandResult {
+    let app_state = app_state::get(ctx).await.unwrap();
+    let guild = msg.guild(&ctx.cache).unwrap();
+    let guild_id = guild.id;
+
+    let channel_id = guild
+        .voice_states
+        .get(&msg.author.id)
+        .and_then(|voice_state| voice_state.channel_id);
+
+    if Some(channel_id).is_some() {
+        let mut subscribe_channels = app_state.subscribe_channels.get_mut(&guild_id).unwrap();
+        subscribe_channels.push(channel_id.unwrap());
+        app_state
+            .subscribe_channels
+            .insert(guild_id, subscribe_channels.to_vec());
+        check_msg(
+            msg.reply(
+                ctx,
+                format!("{}の内容を読み上げるのだ!", channel_id.unwrap()),
+            )
+            .await,
+        );
+    } else {
+        check_msg(msg.reply(ctx, "VCに入っていないのだ!").await);
+    }
 
     Ok(())
 }
@@ -72,6 +107,21 @@ async fn leave(ctx: &Context, msg: &Message) -> CommandResult {
                     .await,
             );
         }
+        //remove subscribe channel
+        let app_state = app_state::get(ctx).await.unwrap();
+        let mut subscribe_channels = app_state.subscribe_channels.get_mut(&guild_id).unwrap();
+        let channel_id = guild
+            .voice_states
+            .get(&msg.author.id)
+            .and_then(|voice_state| voice_state.channel_id);
+        let index = subscribe_channels
+            .iter()
+            .position(|&x| x == channel_id.unwrap())
+            .unwrap();
+        subscribe_channels.remove(index);
+        app_state
+            .subscribe_channels
+            .insert(guild_id, subscribe_channels.to_vec());
 
         check_msg(
             msg.channel_id

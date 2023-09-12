@@ -37,7 +37,7 @@ fn load_prefix() -> String {
 #[group]
 #[description("General Commands")]
 #[summary("General")]
-#[commands(zunda, vc, leave)]
+#[commands(zunda, subscribe, vc, leave)]
 struct General;
 
 #[help]
@@ -96,6 +96,7 @@ async fn main() {
         app_state::AppState {
             voicevox_client: VoiceVoxClient::new("http://voicevox:50021".to_owned()),
             connected_guild_state: DashMap::new(),
+            subscribe_channels: DashMap::new(),
         },
     )
     .await;
