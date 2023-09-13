@@ -26,12 +26,11 @@ use serenity::prelude::{Client, Context};
 use tracing::{info, instrument};
 
 fn load_token() -> String {
-    dotenv::from_path(".secret").unwrap();
+    dotenv::from_path("/run/secrets/discord_token").ok();
     env::var("TOKEN").expect("Expected a token in the environment")
 }
 
 fn load_prefix() -> String {
-    dotenv::from_path(".env").unwrap();
     env::var("PREFIX").expect("Expected a prefix in the environment")
 }
 
