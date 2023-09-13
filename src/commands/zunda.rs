@@ -3,7 +3,7 @@ use serenity::model::prelude::*;
 use serenity::prelude::*;
 use serenity::Result;
 
-use crate::app_state;
+use crate::app_state::{self, add_channels, remove_all_channels, remove_channel};
 
 #[command]
 #[description = "Zunda!"]
@@ -24,7 +24,6 @@ async fn zunda(ctx: &Context, msg: &Message) -> CommandResult {
 #[only_in(guilds)]
 async fn vc(ctx: &Context, msg: &Message) -> CommandResult {
     let app_state = app_state::get(ctx).await.unwrap();
-    let mut subscribe_channels = app_state.write().await.subscribe_channels.clone();
 
     let guild = msg.guild(&ctx.cache).unwrap();
     let guild_id = guild.id;
@@ -37,18 +36,15 @@ async fn vc(ctx: &Context, msg: &Message) -> CommandResult {
     let connect_to = match channel_id {
         Some(channel) => {
             println!("VC connected.");
-            let mut channels = subscribe_channels.get(&guild_id).unwrap_or(&vec![]).clone();
-            channels.push(msg.channel_id);
-            channels.push(channel);
-            subscribe_channels.insert(guild_id, channels);
-            let mut app_state = app_state.write().await;
-            app_state.subscribe_channels = subscribe_channels.clone();
+            let _ = add_channels(ctx, guild_id, vec![channel, msg.channel_id]).await;
+            let state = app_state.read().await;
             check_msg(
                 msg.reply(
                     ctx,
                     format!(
                         "VCに入ったのだ! 読み上げ対象は\n {} \nなのだ!",
-                        subscribe_channels
+                        state
+                            .subscribe_channels
                             .get(&msg.guild_id.unwrap())
                             .unwrap_or(&vec![])
                             .iter()
@@ -99,31 +95,22 @@ async fn leave(ctx: &Context, msg: &Message) -> CommandResult {
             );
         }
 
-        //remove channels
-        let app_state = app_state::get(ctx).await.unwrap();
-        let mut subscribe_channels = app_state.write().await.subscribe_channels.clone();
-        let mut channels = subscribe_channels.get(&guild_id).unwrap_or(&vec![]).clone();
-        channels.retain(|c| c != &msg.channel_id);
-        channels.retain(|c| {
-            c != &guild
-                .voice_states
-                .get(&msg.author.id)
-                .unwrap()
-                .channel_id
-                .unwrap()
-        });
-        subscribe_channels.insert(guild_id, channels);
-        let mut app_state = app_state.write().await;
-        app_state.subscribe_channels = subscribe_channels.clone();
-
-        check_msg(
-            msg.channel_id
-                .say(
-                    &ctx.http,
-                    "サヨナラなのだ!また必要になったら`vc`で呼ぶのだ!",
-                )
-                .await,
-        );
+        if let Err(e) = remove_all_channels(ctx, guild_id).await {
+            check_msg(
+                msg.channel_id
+                    .say(&ctx.http, format!("Failed: {:?}", e))
+                    .await,
+            );
+        } else {
+            check_msg(
+                msg.channel_id
+                    .say(
+                        &ctx.http,
+                        "サヨナラなのだ!また必要になったら`vc`で呼ぶのだ!",
+                    )
+                    .await,
+            );
+        }
     } else {
         check_msg(msg.reply(ctx, "Not in a voice channel").await);
     }
@@ -140,15 +127,15 @@ async fn listen(ctx: &Context, msg: &Message) -> CommandResult {
     let guild_id = guild.id;
 
     if has_handler(ctx, guild_id).await {
-        //add channel
-        let app_state = app_state::get(ctx).await.unwrap();
-        let mut subscribe_channels = app_state.write().await.subscribe_channels.clone();
-        let mut channels = subscribe_channels.get(&guild_id).unwrap_or(&vec![]).clone();
-        channels.push(msg.channel_id);
-        subscribe_channels.insert(guild_id, channels);
-        let mut app_state = app_state.write().await;
-        app_state.subscribe_channels = subscribe_channels.clone();
-        check_msg(msg.reply(ctx, "VCの読み上げ対象に追加したのだ!").await);
+        if let Err(e) = add_channels(ctx, guild_id, vec![msg.channel_id]).await {
+            check_msg(
+                msg.channel_id
+                    .say(&ctx.http, format!("Failed: {:?}", e))
+                    .await,
+            );
+        } else {
+            check_msg(msg.reply(ctx, "VCの読み上げ対象に追加したのだ!").await);
+        }
     }
 
     Ok(())
@@ -193,16 +180,15 @@ async fn listen_remove(ctx: &Context, msg: &Message) -> CommandResult {
     let guild_id = guild.id;
 
     if has_handler(ctx, guild_id).await {
-        //remove channels
-        let app_state = app_state::get(ctx).await.unwrap();
-        let mut subscribe_channels = app_state.write().await.subscribe_channels.clone();
-        let mut channels = subscribe_channels.get(&guild_id).unwrap_or(&vec![]).clone();
-        channels.retain(|c| c != &msg.channel_id);
-        subscribe_channels.insert(guild_id, channels);
-        let mut app_state = app_state.write().await;
-        app_state.subscribe_channels = subscribe_channels.clone();
-
-        check_msg(msg.reply(ctx, "VCの読み上げ対象から削除したのだ!").await);
+        if let Err(e) = remove_channel(ctx, guild_id, msg.channel_id).await {
+            check_msg(
+                msg.channel_id
+                    .say(&ctx.http, format!("Failed: {:?}", e))
+                    .await,
+            );
+        } else {
+            check_msg(msg.reply(ctx, "VCの読み上げ対象から削除したのだ!").await);
+        }
     }
 
     Ok(())

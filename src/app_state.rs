@@ -40,3 +40,38 @@ pub async fn get(ctx: &Context) -> Result<Arc<RwLock<AppState>>> {
     })?;
     Ok(state.clone())
 }
+
+pub async fn add_channels(
+    ctx: &Context,
+    guild_id: GuildId,
+    channels: Vec<ChannelId>,
+) -> Result<()> {
+    let state = get(ctx).await?;
+    let mut state = state.write().await;
+    let mut channels = channels.clone();
+    channels.push(
+        state
+            .connected_guild_state
+            .get(&guild_id)
+            .unwrap()
+            .bound_text_channel,
+    );
+    state.subscribe_channels.insert(guild_id, channels);
+    Ok(())
+}
+
+pub async fn remove_channel(ctx: &Context, guild_id: GuildId, channel: ChannelId) -> Result<()> {
+    let state = get(ctx).await?;
+    let mut state = state.write().await;
+    state.subscribe_channels.entry(guild_id).and_modify(|c| {
+        c.retain(|c| *c != channel);
+    });
+    Ok(())
+}
+
+pub async fn remove_all_channels(ctx: &Context, guild_id: GuildId) -> Result<()> {
+    let state = get(ctx).await?;
+    let mut state = state.write().await;
+    state.subscribe_channels.remove(&guild_id);
+    Ok(())
+}
