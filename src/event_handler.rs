@@ -18,7 +18,15 @@ impl EventHandler for Handler {
     }
 
     async fn message(&self, ctx: Context, msg: Message) {
-        let state = app_state::get(&ctx).await.unwrap();
+        let app_state = app_state::get(&ctx).await.unwrap();
+        let listen_channels = app_state
+            .read()
+            .await
+            .subscribe_channels
+            .clone()
+            .get(&msg.guild_id.unwrap())
+            .unwrap_or(&vec![])
+            .clone();
         let guild_id = msg.guild_id.unwrap();
         let guild = guild_id.to_guild_cached(&ctx.cache).unwrap();
 
@@ -26,20 +34,15 @@ impl EventHandler for Handler {
             .voice_states
             .get(&msg.author.id)
             .and_then(|voice_state| voice_state.channel_id);
-        let text_channel_id = msg.channel_id;
-        let subscribe_channel_ids = state.subscribe_channels.get(&guild_id).unwrap();
-        let channel_ids = subscribe_channel_ids
-            .iter()
-            .map(|channel_id| channel_id.to_owned())
-            .collect::<Vec<ChannelId>>();
         if channel_id.is_none() {
-            return;
-        }
-        if channel_ids.contains(&text_channel_id) {
             return;
         }
 
         if msg.author.bot {
+            return;
+        }
+
+        if !listen_channels.contains(&msg.channel_id) {
             return;
         }
 
@@ -57,9 +60,10 @@ impl EventHandler for Handler {
         if is_head_symbol(&msg.content) {
             return;
         }
-
+        let state = app_state::get(&ctx).await.unwrap();
+        let voicevox_client = &state.read().await.voicevox_client;
         let eoncoded_audio = make_speech(
-            &state.voicevox_client,
+            voicevox_client,
             SpeechRequest {
                 text: msg.clone().content,
             },
