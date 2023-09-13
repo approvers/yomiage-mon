@@ -92,7 +92,13 @@ impl EventHandler for Handler {
             .expect("Songbird Voice client placed in at initialisation.")
             .clone();
         let channel_id_bot_joined = get_channel_id(guild.clone(), ctx.cache.current_user_id());
-        let is_members_in_vc = !get_members_in_vc(guild, channel_id_bot_joined.unwrap()).is_empty();
+        let is_members_in_vc = !get_members_in_vc(
+            guild,
+            channel_id_bot_joined.unwrap_or_else(|| {
+                panic!("Bot is not in VC. Bot is in {:?}", channel_id_bot_joined)
+            }),
+        )
+        .is_empty();
         if !is_members_in_vc {
             let _ = manager.remove(guild_id).await;
         }

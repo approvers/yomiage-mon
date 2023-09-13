@@ -69,7 +69,20 @@ async fn vc(ctx: &Context, msg: &Message) -> CommandResult {
         .expect("Songbird Voice client placed in at initialisation.")
         .clone();
 
-    let _handler = manager.join(guild_id, connect_to).await;
+    let handler = manager.join(guild_id, connect_to).await;
+    match handler.1 {
+        Ok(_) => {
+            println!("Joined VC");
+        }
+        Err(why) => {
+            println!("Failed to join VC: {:?}", why);
+            check_msg(
+                msg.channel_id
+                    .say(&ctx.http, format!("Error joining the channel: {:?}", why))
+                    .await,
+            );
+        }
+    }
 
     Ok(())
 }

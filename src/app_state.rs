@@ -48,15 +48,11 @@ pub async fn add_channels(
 ) -> Result<()> {
     let state = get(ctx).await?;
     let mut state = state.write().await;
-    let mut channels = channels.clone();
-    channels.push(
-        state
-            .connected_guild_state
-            .get(&guild_id)
-            .unwrap()
-            .bound_text_channel,
-    );
-    state.subscribe_channels.insert(guild_id, channels);
+    state
+        .subscribe_channels
+        .entry(guild_id)
+        .or_default()
+        .extend(channels);
     Ok(())
 }
 
