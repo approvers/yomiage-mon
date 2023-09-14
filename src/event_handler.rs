@@ -60,7 +60,7 @@ impl EventHandler for Handler {
         if is_head_symbol(&msg.content) {
             return;
         }
-        let voicevox_client = &state.read().await.voicevox_client;
+        let voicevox_client = &app_state.read().await.voicevox_client;
         let eoncoded_audio = make_speech(
             voicevox_client,
             SpeechRequest {
