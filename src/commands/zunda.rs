@@ -184,6 +184,8 @@ async fn list(ctx: &Context, msg: &Message) -> CommandResult {
             )
             .await,
         );
+    } else {
+        check_msg(msg.reply(ctx, "読み上げ対象はないのだ!").await);
     }
 
     Ok(())
