@@ -34,18 +34,15 @@ pub async fn initialize(client: &Client, state: AppState) {
 }
 
 pub async fn get(ctx: &Context) -> Result<Arc<RwLock<AppState>>> {
+    use anyhow::Context as _;
     let data = ctx.data.read().await;
-    let state = data.get::<AppState>().ok_or_else(|| {
-        anyhow::anyhow!("AppState is not initialized. Please call app_state::initialize() first.")
-    })?;
+    let state = data
+        .get::<AppState>()
+        .context("AppState is not initialized. Please call app_state::initialize() first.")?;
     Ok(state.clone())
 }
 
-pub async fn add_channels(
-    ctx: &Context,
-    guild_id: GuildId,
-    channels: Vec<ChannelId>,
-) -> Result<()> {
+pub async fn add_channels(ctx: &Context, guild_id: GuildId, channels: &[ChannelId]) -> Result<()> {
     let state = get(ctx).await?;
     let mut state = state.write().await;
     state

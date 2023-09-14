@@ -36,7 +36,7 @@ async fn vc(ctx: &Context, msg: &Message) -> CommandResult {
     let connect_to = match channel_id {
         Some(channel) => {
             println!("VC connected.");
-            let _ = add_channels(ctx, guild_id, vec![channel, msg.channel_id]).await;
+            let _ = add_channels(ctx, guild_id, &[channel, msg.channel_id]).await;
             let state = app_state.read().await;
             check_msg(
                 msg.reply(
@@ -140,7 +140,7 @@ async fn listen(ctx: &Context, msg: &Message) -> CommandResult {
     let guild_id = guild.id;
 
     if has_handler(ctx, guild_id).await {
-        if let Err(e) = add_channels(ctx, guild_id, vec![msg.channel_id]).await {
+        if let Err(e) = add_channels(ctx, guild_id, &[msg.channel_id]).await {
             check_msg(
                 msg.channel_id
                     .say(&ctx.http, format!("Failed: {:?}", e))
@@ -165,23 +165,25 @@ async fn list(ctx: &Context, msg: &Message) -> CommandResult {
     let guild_id = guild.id;
 
     if let Some(channels) = subscribe_channels.get(&guild_id) {
-    check_msg(
-        msg.reply(
-            ctx,
-            format!(
-                "読み上げ対象は\n {} \nなのだ!",
-                channels
-                    .iter()
-                    .map(|c| format!(" <#{}> ", c))
-                    .collect::<Vec<String>>()
-                    .join("\n")
-            ),
-        )
-        .await,
-    );
-    } else {
-        check_msg(msg.reply(ctx, "読み上げ対象はないのだ!").await);
-        return Ok(());
+        if channels.is_empty() {
+            check_msg(msg.reply(ctx, "読み上げ対象はないのだ!").await);
+            return Ok(());
+        }
+
+        check_msg(
+            msg.reply(
+                ctx,
+                format!(
+                    "読み上げ対象は\n {} \nなのだ!",
+                    channels
+                        .iter()
+                        .map(|c| format!(" <#{}> ", c))
+                        .collect::<Vec<String>>()
+                        .join("\n")
+                ),
+            )
+            .await,
+        );
     }
 
     Ok(())
@@ -213,8 +215,7 @@ async fn listen_remove(ctx: &Context, msg: &Message) -> CommandResult {
 async fn has_handler(ctx: &Context, guild_id: GuildId) -> bool {
     let manager = songbird::get(ctx)
         .await
-        .expect("Songbird Voice client placed in at initialisation.")
-        .clone();
+        .expect("Songbird Voice client placed in at initialisation.");
     manager.get(guild_id).is_some()
 }
 
