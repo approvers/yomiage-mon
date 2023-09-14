@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.8](https://github.com/approvers/yomiage-mon/compare/v0.1.7...v0.1.8) (2023-09-14)
+
+
+### Features
+
+* **wip:** 読み上げ対象のチャネルの制限機能を追加 ([#37](https://github.com/approvers/yomiage-mon/issues/37)) ([2de1503](https://github.com/approvers/yomiage-mon/commit/2de1503646ce1a317e95c2cb399b18185f98763e))
+
 ## [0.1.7](https://github.com/approvers/yomiage-mon/compare/v0.1.6...v0.1.7) (2023-09-12)
 
 
