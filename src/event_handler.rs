@@ -61,7 +61,7 @@ impl EventHandler for Handler {
             return;
         }
         let voicevox_client = &app_state.read().await.voicevox_client;
-        let eoncoded_audio = make_speech(
+        let encoded_audio = make_speech(
             voicevox_client,
             SpeechRequest {
                 text: msg.clone().content,
@@ -70,7 +70,7 @@ impl EventHandler for Handler {
         .await
         .unwrap();
 
-        let raw_audio = eoncoded_audio.decode().await.unwrap();
+        let raw_audio = encoded_audio.decode().await.unwrap();
 
         let voice_success = enqueue(&ctx, guild_id, raw_audio.into()).await;
         if voice_success.is_ok() {
