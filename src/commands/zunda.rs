@@ -164,8 +164,7 @@ async fn list(ctx: &Context, msg: &Message) -> CommandResult {
     let guild = msg.guild(&ctx.cache).unwrap();
     let guild_id = guild.id;
 
-    let channels = subscribe_channels.get(&guild_id).unwrap_or(&vec![]).clone();
-
+    if let Some(channels) = subscribe_channels.get(&guild_id) {
     check_msg(
         msg.reply(
             ctx,
@@ -180,6 +179,10 @@ async fn list(ctx: &Context, msg: &Message) -> CommandResult {
         )
         .await,
     );
+    } else {
+        check_msg(msg.reply(ctx, "読み上げ対象はないのだ!").await);
+        return Ok(());
+    }
 
     Ok(())
 }
