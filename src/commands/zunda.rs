@@ -165,16 +165,15 @@ async fn list(ctx: &Context, msg: &Message) -> CommandResult {
     let guild_id = guild.id;
 
     let reply_msg = match subscribe_channels.get(&guild_id) {
-        Some(channels) if !channels.is_empty() =>
-            format!(
-                "読み上げ対象は\n {} \nなのだ!",
-                channels
-                    .iter()
-                    .map(|c| format!(" <#{}> ", c))
-                    .collect::<Vec<String>>()
-                    .join("\n")
-            ),
-        _ => "読み上げ対象はないのだ!".to_string()
+        Some(channels) if !channels.is_empty() => format!(
+            "読み上げ対象は\n {} \nなのだ!",
+            channels
+                .iter()
+                .map(|c| format!(" <#{}> ", c))
+                .collect::<Vec<String>>()
+                .join("\n")
+        ),
+        _ => "読み上げ対象はないのだ!".to_string(),
     };
 
     check_msg(msg.reply(ctx, reply_msg).await);
