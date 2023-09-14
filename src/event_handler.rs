@@ -18,6 +18,15 @@ impl EventHandler for Handler {
     }
 
     async fn message(&self, ctx: Context, msg: Message) {
+        let app_state = app_state::get(&ctx).await.unwrap();
+        let listen_channels = app_state
+            .read()
+            .await
+            .subscribe_channels
+            .clone()
+            .get(&msg.guild_id.unwrap())
+            .unwrap_or(&vec![])
+            .clone();
         let guild_id = msg.guild_id.unwrap();
         let guild = guild_id.to_guild_cached(&ctx.cache).unwrap();
 
@@ -30,6 +39,10 @@ impl EventHandler for Handler {
         }
 
         if msg.author.bot {
+            return;
+        }
+
+        if !listen_channels.contains(&msg.channel_id) {
             return;
         }
 
@@ -47,11 +60,9 @@ impl EventHandler for Handler {
         if is_head_symbol(&msg.content) {
             return;
         }
-
-        let state = app_state::get(&ctx).await.unwrap();
-
+        let voicevox_client = &app_state.read().await.voicevox_client;
         let eoncoded_audio = make_speech(
-            &state.voicevox_client,
+            voicevox_client,
             SpeechRequest {
                 text: msg.clone().content,
             },
@@ -80,7 +91,13 @@ impl EventHandler for Handler {
             .expect("Songbird Voice client placed in at initialisation.")
             .clone();
         let channel_id_bot_joined = get_channel_id(guild.clone(), ctx.cache.current_user_id());
-        let is_members_in_vc = !get_members_in_vc(guild, channel_id_bot_joined.unwrap()).is_empty();
+        let is_members_in_vc = !get_members_in_vc(
+            guild,
+            channel_id_bot_joined.unwrap_or_else(|| {
+                panic!("Bot is not in VC. Bot is in {:?}", channel_id_bot_joined)
+            }),
+        )
+        .is_empty();
         if !is_members_in_vc {
             let _ = manager.remove(guild_id).await;
         }

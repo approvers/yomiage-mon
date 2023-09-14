@@ -5,7 +5,7 @@ pub mod voice;
 
 use dashmap::DashMap;
 use event_handler::Handler;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::env;
 use voice::voicevox::VoiceVoxClient;
 
@@ -37,7 +37,7 @@ fn load_prefix() -> String {
 #[group]
 #[description("General Commands")]
 #[summary("General")]
-#[commands(zunda, vc, leave)]
+#[commands(zunda, vc, leave, listen, list, listen_remove)]
 struct General;
 
 #[help]
@@ -96,6 +96,7 @@ async fn main() {
         app_state::AppState {
             voicevox_client: VoiceVoxClient::new("http://voicevox:50021".to_owned()),
             connected_guild_state: DashMap::new(),
+            subscribe_channels: HashMap::new(),
         },
     )
     .await;
